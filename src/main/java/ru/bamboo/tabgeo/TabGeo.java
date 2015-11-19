@@ -1,4 +1,4 @@
-package main.java;
+package ru.bamboo.tabgeo;
 
 import com.neovisionaries.i18n.CountryCode;
 
@@ -17,6 +17,16 @@ import java.util.Arrays;
  */
 public class TabGeo {
 
+	private static byte[] countryData;
+
+	/**
+	 * Init driver with metaData file
+	 * @param fileName -
+	 * @throws IOException
+	 */
+	public TabGeo(String fileName) throws IOException {
+			countryData = readBinaryFile(fileName);
+	}
 
 	private Unpack tabgeo_bs(byte[][] data, int ip, boolean step) {
 		int start = 0;
@@ -50,17 +60,16 @@ public class TabGeo {
 
 	}
 
-	public CountryCode country(String ip) throws IOException {
+	public CountryCode checkCountry(String ip) throws IOException {
 		String[] ip_s= ip.split("\\.");
 		int[] ip_array = new int[ip_s.length];
 		for (int i = 0; i < ip_s.length; i++) {
 			ip_array[i] = Integer.parseInt(ip_s[i]);
 		}
 
-		byte[] bytes = readBinaryFile("tabgeo_country_v4.dat");
 		int ip_start = (ip_array[0] * 256 + ip_array[1]) * 4;
 		byte[] bytes_f = new byte[5];
-		System.arraycopy(bytes, ip_start, bytes_f, 1,4);
+		System.arraycopy(countryData, ip_start, bytes_f, 1,4);
 
 		Unpack d = new Unpack();
 
@@ -70,7 +79,7 @@ public class TabGeo {
 
 		ip_start = d.getOffset() * 5 + 262144;
 		bytes_f=new byte[(d.getCountry_ID() + 1) * 5];
-		System.arraycopy(bytes, ip_start, bytes_f, 0, (d.getCountry_ID() + 1) * 5);
+		System.arraycopy(countryData, ip_start, bytes_f, 0, (d.getCountry_ID() + 1) * 5);
 
 		d = tabgeo_bs(dataSplit(bytes_f,d.getCountry_ID(),5), ip_array[2], true);
 		if(d.getOffset() == 16777215) return CountryCode.getByCode(Iso.values()[d.getCountry_ID()].toString());
@@ -78,9 +87,9 @@ public class TabGeo {
 
 		if(ip_array[2] > d.getIp()) ip_array[3] = 255;
 
-		ip_start = bytes.length-((d.getOffset() + 1 + d.getCountry_ID()) * 2);
+		ip_start = countryData.length-((d.getOffset() + 1 + d.getCountry_ID()) * 2);
 		bytes_f=new byte[(d.getCountry_ID() + 1) * 2];
-		System.arraycopy(bytes, ip_start, bytes_f, 0,(d.getCountry_ID() + 1) * 2);
+		System.arraycopy(countryData, ip_start, bytes_f, 0,(d.getCountry_ID() + 1) * 2);
 
 		d = tabgeo_bs(dataSplit(bytes_f,d.getCountry_ID(),2), ip_array[3], false);
 		return CountryCode.getByCode(Iso.values()[d.getCountry_ID()].toString());

@@ -1,4 +1,4 @@
-package main.java;
+package ru.bamboo.tabgeo;
 
 /**
  * Created by murik on 17.11.15.

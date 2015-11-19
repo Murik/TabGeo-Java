@@ -1,4 +1,4 @@
-package main.java;
+package ru.bamboo.tabgeo;
 
 import com.neovisionaries.i18n.CountryCode;
 
