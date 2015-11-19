@@ -49,6 +49,10 @@ public class Unpack {
 	}
 
 	public CountryCode getCountryCode(){
-		return CountryCode.getByCode(Iso.values()[country_ID].toString());
+		return CountryCode.getByCode(getCountry());
+	}
+
+	public String getCountry(){
+		return Iso.values()[country_ID].toString();
 	}
 }

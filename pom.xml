@@ -10,7 +10,7 @@
         <version>7</version>
     </parent>
 
-    <groupId>ru.bamboo</groupId>
+    <groupId>ru.quizit</groupId>
     <artifactId>tabgeo-java</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>

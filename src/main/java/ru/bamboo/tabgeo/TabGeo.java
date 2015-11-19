@@ -60,7 +60,7 @@ public class TabGeo {
 
 	}
 
-	public CountryCode checkCountry(String ip) throws IOException {
+	public String checkCountry(String ip) {
 		String[] ip_s= ip.split("\\.");
 		int[] ip_array = new int[ip_s.length];
 		for (int i = 0; i < ip_s.length; i++) {
@@ -75,14 +75,14 @@ public class TabGeo {
 
 		d.setOffset(unpackByte(bytes_f,  ByteOrder.BIG_ENDIAN)[0]);
 		d.setCountry_ID(bytes_f[4] & 0xFF);
-		if(d.getOffset() == 16777215) return d.getCountryCode();
+		if(d.getOffset() == 16777215) return d.getCountry();
 
 		ip_start = d.getOffset() * 5 + 262144;
 		bytes_f=new byte[(d.getCountry_ID() + 1) * 5];
 		System.arraycopy(countryData, ip_start, bytes_f, 0, (d.getCountry_ID() + 1) * 5);
 
 		d = tabgeo_bs(dataSplit(bytes_f,d.getCountry_ID(),5), ip_array[2], true);
-		if(d.getOffset() == 16777215) return CountryCode.getByCode(Iso.values()[d.getCountry_ID()].toString());
+		if(d.getOffset() == 16777215) return d.getCountry();
 
 
 		if(ip_array[2] > d.getIp()) ip_array[3] = 255;
@@ -92,9 +92,13 @@ public class TabGeo {
 		System.arraycopy(countryData, ip_start, bytes_f, 0,(d.getCountry_ID() + 1) * 2);
 
 		d = tabgeo_bs(dataSplit(bytes_f,d.getCountry_ID(),2), ip_array[3], false);
-		return CountryCode.getByCode(Iso.values()[d.getCountry_ID()].toString());
+		return d.getCountry();
 	}
 
+
+	public CountryCode checkCountryCode(String ip) {
+		return CountryCode.getByCode(checkCountry(ip));
+	}
 
 	private byte[] readBinaryFile(String aFileName) throws IOException {
 		Path path = Paths.get(aFileName);
