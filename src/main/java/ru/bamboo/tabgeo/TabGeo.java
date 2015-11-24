@@ -21,8 +21,8 @@ public class TabGeo {
 
 	/**
 	 * Init driver with metaData file
-	 * @param fileName -
-	 * @throws IOException
+	 * @param fileName - path to metadata file
+	 * @throws IOException -  File not found or empty
 	 */
 	public TabGeo(String fileName) throws IOException {
 			countryData = readBinaryFile(fileName);
