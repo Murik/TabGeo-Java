@@ -28,6 +28,10 @@ public class TabGeo {
 			countryData = readBinaryFile(fileName);
 	}
 
+	public TabGeo(Path file) throws IOException {
+		countryData = this.readBinaryFile(file);
+	}
+
 	private Unpack tabgeo_bs(byte[][] data, int ip, boolean step) {
 		int start = 0;
 		int end = data.length - 1;
@@ -100,10 +104,15 @@ public class TabGeo {
 		return CountryCode.getByCode(checkCountry(ip));
 	}
 
-	private byte[] readBinaryFile(String aFileName) throws IOException {
-		Path path = Paths.get(aFileName);
+
+	private byte[] readBinaryFile(Path path) throws IOException {
 		if(!Files.exists(path)) throw new FileNotFoundException();
 		return Files.readAllBytes(path);
+	}
+
+	private byte[] readBinaryFile(String aFileName) throws IOException {
+		Path path = Paths.get(aFileName);
+		return readBinaryFile(path);
 	}
 
 	public static int[] unpackByte ( byte[] bytes  , ByteOrder order) {
